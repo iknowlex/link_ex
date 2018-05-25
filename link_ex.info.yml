@@ -1,0 +1,7 @@
+name: Link Ex
+type: module
+description: Extend a link widget to allow settings of link attributes and file browser (Imce File Manager) integration.
+# core: 8.x
+dependencies:
+  - drupal:link
+core: 8.x

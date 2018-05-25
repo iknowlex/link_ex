@@ -1,0 +1,13 @@
+drupal.link_ex.imce:
+  version: VERSION
+  css:
+    component:
+      css/link_ex.imce.css: {}
+  js:
+    js/link_ex.imce.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupal
+    - core/drupalSettings
+    - imce/drupal.imce
+    - drupal.imce.input

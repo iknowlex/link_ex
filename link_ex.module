@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Contains main module functions.
+ * More info: https://github.com/iknowlex/link_ex
+ * @About www.iknowlex.com
+ */
+
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+
+/**
+ * Implements hook_entity_base_field_info_alter().
+ */
+function link_ex_entity_base_field_info_alter(&$fields, EntityTypeInterface $entity_type) {
+  if ($entity_type->id() === 'menu_link_content') {
+    $fields['link']->setDisplayOptions('form', [
+      'type' => 'link_ex',
+      'weight' => -2,
+    ]);
+  }
+}
+
+/**
+ *
+ */
+function link_ex_page_attachments(array &$attachments) {
+  // Editing and file browser is only supported on the admin.
+  if (!\Drupal::service('router.admin_context')
+    ->isAdminRoute()) {
+    return;
+  }
+
+  if (!\Drupal::moduleHandler()->moduleExists('imce')) {
+    return;
+  }
+
+  if (\Drupal\imce\Imce::access()) {
+    $attachments['#attached']['library'][] = 'link_ex/drupal.link_ex.imce';
+  }
+}
+
+/**
+ * Implements hook_help().
+ */
+function link_ex_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.link_ex':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The link_ex Drupal module provides a extended link widget that allows users to set attributes to link and associate file browser for link url selection.') . '</p>';
+      return $output;
+  }
+}

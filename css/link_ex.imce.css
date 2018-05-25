@@ -1,0 +1,15 @@
+.link_ex-imce-button {
+  display: block;
+  margin: 2px 0;
+  line-height: 2.1;
+}
+.link_ex-imce-button:before {
+  content: '';
+  float: left;
+  width: 24px;
+  height: 24px;
+  margin-right: 6px;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAMAAAAocOYLAAAAllBMVEUZddEAAAAYd9IYddMYdtIYddIZdtIA//8ZdtIYdtIZddEZdtL////p8vsZdc9xquM1h9crgdalx+dyq+OpzO9TldM0hNIYc8z8/f6kxOGlye0Yccno8frQ4/Z+sua10/GFtueNt98xhNcceNMofM00gMoYb8UXbcHP4fKtzOmRvemNu+mYuttIktssf9AzfcQlcr4Xa731obDVAAAAC3RSTlP+ADOH5OOiAaGFoe4UEt0AAADOSURBVCjP1dPZEoIgFIDhg2sGWrZhuWdp+/L+Lxc5hDgkXfdf+o3DDJwDCCFjbIOaPTKYAXI9wN8Dz2Xu4eFMBAZonOkI63LA1roFoHXgHp43rGLQ0yhJEp8U4aeq51uSYVYe5QveaSf7lEzaU1IiusSq4+q65B2jB1W9a07udaD1fUxB6wFo/19h/DfO718q4y7ez+8XHajst3L9biYqu/drg+bZ1DENRPxzN3+UqTp/0vwGKmPn5/wjU78/yDUH9890Ubu/jgVqlmMwewEghStiOLD/gwAAAABJRU5ErkJggg==);
+}
