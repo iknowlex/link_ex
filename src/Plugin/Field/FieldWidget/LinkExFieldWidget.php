@@ -185,6 +185,15 @@ class LinkExFieldWidget extends LinkWidget {
       '#description' => '',
     ];
 
+    $option['title'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Title'),
+      '#placeholder' => $this->t('Title attribute'),
+      '#default_value' => NULL,
+      '#maxlength' => 128,
+      '#description' => '',
+    ];
+
     $option['target'] = [
       '#type' => 'select',
       '#title' => $this->t('Link target'),
