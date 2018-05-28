@@ -67,7 +67,7 @@
       var el = $('#' + win.imce.getQuery('inputId'))[0];
       win.close();
       if (el) {
-        $(el).val(url).change().focus();
+        $(el).val(decodeURI(url)).change().focus();
       }
     }
   
