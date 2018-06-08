@@ -8,7 +8,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\link\Plugin\Field\FieldWidget\LinkWidget;
 
 /**
- * Plugin implementation of the 'link' widget.
+ * Plugin implementation of the 'link_ex' widget.
  *
  * @FieldWidget(
  *   id = "link_ex",
@@ -50,7 +50,6 @@ class LinkExFieldWidget extends LinkWidget {
       'placeholder_url' => '',
       'placeholder_title' => '',
       'enabled_attributes' => [],
-
     ] + parent::defaultSettings();
   }
 
@@ -75,6 +74,7 @@ class LinkExFieldWidget extends LinkWidget {
     ];
 
     $attOptions = $this->attributeOptions();
+	 
     // Remove hidden options as.
     $plugin_definitions = array_diff_key($attOptions, array_filter($attOptions, function ($var) {
         return ($var['#type'] === 'hidden');
@@ -85,7 +85,7 @@ class LinkExFieldWidget extends LinkWidget {
     foreach ($enabled_attributes as $attribute) {
       if (isset($plugin_definitions[$attribute])) {
         $element['options']['attributes'][$attribute] = $plugin_definitions[$attribute];
-        $element['options']['attributes'][$attribute]['#default_value'] = isset($attributes[$attribute]) ? $attributes[$attribute] : '';
+        $element['options']['attributes'][$attribute]['#default_value'] = (isset($attributes[$attribute]) ? $attributes[$attribute] : '');
       }
     }
 
@@ -113,7 +113,8 @@ class LinkExFieldWidget extends LinkWidget {
       '#default_value' => array_combine($selected, $selected),
       '#description' => $this->t('Select the attributes to allow the user to edit.'),
     ];
-    return $element;
+	
+	return $element;
   }
 
   /**
@@ -151,6 +152,7 @@ class LinkExFieldWidget extends LinkWidget {
       '#placeholder' => $this->t('ID attribute'),
       '#default_value' => NULL,
       '#maxlength' => 255,
+      '#description' => $this->t('The id attribute.'),
     ];
 
     $option['rel'] = [
@@ -174,6 +176,8 @@ class LinkExFieldWidget extends LinkWidget {
       ],
       '#required' => FALSE,
       '#empty_value' => '',
+      '#description' => $this->t('Relationship between the current document and the linked document'),
+	  
     ];
 
     $option['name'] = [
@@ -182,7 +186,7 @@ class LinkExFieldWidget extends LinkWidget {
       '#placeholder' => $this->t('Name attribute'),
       '#default_value' => NULL,
       '#maxlength' => 255,
-      '#description' => '',
+      '#description' => $this->t('Not supported in HTML5'),
     ];
 
     $option['title'] = [
@@ -191,7 +195,7 @@ class LinkExFieldWidget extends LinkWidget {
       '#placeholder' => $this->t('Title attribute'),
       '#default_value' => NULL,
       '#maxlength' => 128,
-      '#description' => '',
+      '#description' => $this->t('The title attribute. Use %filename or %url variable to specify in title.', ['%filename' => '<filename>', '%url' => '<url>'] ),
     ];
 
     $option['target'] = [
@@ -203,6 +207,7 @@ class LinkExFieldWidget extends LinkWidget {
       ],
       '#required' => FALSE,
       '#empty_value' => '',
+      '#description' => $this->t('Specifies where to open the linked document'),
     ];
 
     $option['class'] = [
@@ -211,6 +216,7 @@ class LinkExFieldWidget extends LinkWidget {
       '#placeholder' => $this->t('CSS classs'),
       '#default_value' => NULL,
       '#maxlength' => 255,
+      '#description' => $this->t('CSS class(s) for the element.'),
     ];
 
     $option['accesskey'] = [
@@ -221,6 +227,14 @@ class LinkExFieldWidget extends LinkWidget {
       '#maxlength' => 255,
       '#description' => '',
     ];
+    $option['download'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Download'),
+      '#placeholder' => $this->t('Download filename'),
+      '#default_value' => NULL,
+      '#maxlength' => 255,
+      '#description' => $this->t('Html5 download attribute specifies that the target will be downloaded on link click. Use %filename for file name or %blank to leave attribute blank.', ['%filename' => '<filename>', '%blank' => '<blank>'] ),
+    ];	
 
     $option['imce'] = [
       '#type' => 'hidden',
@@ -230,5 +244,5 @@ class LinkExFieldWidget extends LinkWidget {
 
     return $option;
   }
-
+	
 }
