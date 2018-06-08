@@ -18,7 +18,7 @@ Works with Durpal 8 and Link
 
 
 
-##Description
+## Description
 
 ![LinkEx](https://user-images.githubusercontent.com/39402077/40540850-8327d6fa-6011-11e8-899c-40bca0dd96a3.png "LinkEx and Imce file manager for link")
 
@@ -26,7 +26,7 @@ Works with Durpal 8 and Link
 - Allow to set custom attributes to link url for batter control over link markup.
 - Enables browsing of existing documents or files using Imce file manager and set as link.
 
-##Installation
+## Installation
 
 Install as you would normally install a contributed Drupal module. See:
 https://www.drupal.org/docs/8/extending-drupal-8/installing-drupal-8-modules
