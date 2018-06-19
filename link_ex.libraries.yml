@@ -10,4 +10,4 @@ drupal.link_ex.imce:
     - core/drupal
     - core/drupalSettings
     - imce/drupal.imce
-    - drupal.imce.input
+    - imce/drupal.imce.input
