@@ -25,6 +25,8 @@ Works with Durpal 8 and Link
 - Helpful to use link field for internal / external linking.
 - Allow to set custom attributes to link url for batter control over link markup.
 - Enable to add file size value in title for Drupal public files.
+- Allow to add file extension value in title and link text field.
+- Link text field now enable support for file size and file type extension value by using variables as <extension>, <size> or <filename>
 - Enables browsing of existing documents or files using Imce file manager and set as link.
 
 ## Installation

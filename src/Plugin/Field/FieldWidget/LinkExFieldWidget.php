@@ -195,7 +195,7 @@ class LinkExFieldWidget extends LinkWidget {
       '#placeholder' => $this->t('Title attribute'),
       '#default_value' => NULL,
       '#maxlength' => 128,
-      '#description' => $this->t('The title attribute. Use %filename, %size or %url variable to specify in title.', ['%filename' => '<filename>','%size' => '<size>', '%url' => '<url>'] ),
+      '#description' => $this->t('The title attribute. Use %filename, %size, %extension or %url variable to specify in title.', ['%filename' => '<filename>','%size' => '<size>', '%extension' => '<extension>', '%url' => '<url>'] ),
     ];
 
     $option['target'] = [
