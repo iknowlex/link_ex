@@ -60,7 +60,7 @@ class LinkExFormatter extends LinkFormatter {
       }  
       if(isset($element['#title']) && stripos($element['#title'], "<filename>") !== FALSE ) { 
 			$element['#title'] = str_ireplace('<filename>', basename($struri), $element['#title']);		  
-      }  
+      }
 
       if (isset($element['#options']['attributes']['download'])) {
 

@@ -11,7 +11,7 @@ Works with Durpal 8 and Link
 
 ## Known Issue
  - Support IMCE file browser only, if available.
- - Not validating IMCE module depedancy 
+ - Not validating IMCE module dependency 
 
 ## Credits
  - Link attributes (link_attributes)
@@ -24,7 +24,7 @@ Works with Durpal 8 and Link
 
 - Helpful to use link field for internal / external linking.
 - Allow to set custom attributes to link url for batter control over link markup.
-- Enable to add file size value in title for Drupal public files.
+- Enable to add file size value in title for Drupal 8 public files.
 - Allow to add file extension value in title and link text field.
 - Link text field now enable support for file size and file type extension value by using variables as <extension>, <size> or <filename>
 - Enables browsing of existing documents or files using Imce file manager and set as link.
