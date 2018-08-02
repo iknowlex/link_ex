@@ -74,7 +74,7 @@ class LinkExFieldWidget extends LinkWidget {
     ];
 
     $attOptions = $this->attributeOptions();
-	 
+
     // Remove hidden options as.
     $plugin_definitions = array_diff_key($attOptions, array_filter($attOptions, function ($var) {
         return ($var['#type'] === 'hidden');
@@ -92,6 +92,9 @@ class LinkExFieldWidget extends LinkWidget {
     // @todo setup based on the attribute configuration
     if (in_array('imce', $enabled_attributes)) {
       $element['uri']['#attributes']['data-link_ex-file_browser'] = 'imce';
+    }
+    if (in_array('imce_private', $enabled_attributes)) {
+      $element['uri']['#attributes']['data-link_ex-file_private'] = 'imce_private';
     }
 
     return $element;
@@ -113,8 +116,8 @@ class LinkExFieldWidget extends LinkWidget {
       '#default_value' => array_combine($selected, $selected),
       '#description' => $this->t('Select the attributes to allow the user to edit.'),
     ];
-	
-	return $element;
+
+    return $element;
   }
 
   /**
@@ -177,7 +180,7 @@ class LinkExFieldWidget extends LinkWidget {
       '#required' => FALSE,
       '#empty_value' => '',
       '#description' => $this->t('Relationship between the current document and the linked document'),
-	  
+
     ];
 
     $option['name'] = [
@@ -195,7 +198,7 @@ class LinkExFieldWidget extends LinkWidget {
       '#placeholder' => $this->t('Title attribute'),
       '#default_value' => NULL,
       '#maxlength' => 128,
-      '#description' => $this->t('The title attribute. Use %filename, %size, %extension or %url variable to specify in title.', ['%filename' => '<filename>','%size' => '<size>', '%extension' => '<extension>', '%url' => '<url>'] ),
+      '#description' => $this->t('The title attribute. Use %filename, %size, %extension or %url variable to specify in title.', ['%filename' => '<filename>', '%size' => '<size>', '%extension' => '<extension>', '%url' => '<url>']),
     ];
 
     $option['target'] = [
@@ -216,7 +219,7 @@ class LinkExFieldWidget extends LinkWidget {
       '#placeholder' => $this->t('CSS classs'),
       '#default_value' => NULL,
       '#maxlength' => 255,
-      '#description' => $this->t('CSS class(s) for the element.'),
+      '#description' => $this->t('CSS class(s) for the element. Use %mime, %extension variable to specify in class.', ['%mime' => '<mime>', '%extension' => '<extension>']),
     ];
 
     $option['accesskey'] = [
@@ -233,16 +236,18 @@ class LinkExFieldWidget extends LinkWidget {
       '#placeholder' => $this->t('Download filename'),
       '#default_value' => NULL,
       '#maxlength' => 255,
-      '#description' => $this->t('Html5 download attribute specifies that the target will be downloaded on link click. Use %filename for file name or %blank to leave attribute blank.', ['%filename' => '<filename>', '%blank' => '<blank>'] ),
-    ];	
+      '#description' => $this->t('Html5 download attribute specifies that the target will be downloaded on link click. Use %filename for file name or %blank to leave attribute blank.', ['%filename' => '<filename>', '%blank' => '<blank>']),
+    ];
 
     $option['imce'] = [
       '#type' => 'hidden',
       '#title' => $this->t('Imce File Manager'),
-      '#placeholder' => $this->t('Link accesskey'),
     ];
-
+    $option['imce_private'] = [
+      '#type' => 'hidden',
+      '#title' => $this->t('Imce File Manager (Private)'),
+    ];
     return $option;
   }
-	
+
 }

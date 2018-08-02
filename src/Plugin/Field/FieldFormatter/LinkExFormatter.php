@@ -5,6 +5,7 @@ namespace Drupal\link_ex\Plugin\Field\FieldFormatter;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\link\Plugin\Field\FieldFormatter\LinkFormatter;
 use Drupal\Core\StreamWrapper\PublicStream;
+use Drupal\Core\Url;
 
 /**
  * Plugin implementation of the 'link_ex' formatter.
@@ -33,68 +34,101 @@ class LinkExFormatter extends LinkFormatter {
   public function viewElements(FieldItemListInterface $items, $langcode) {
     /** @var \Drupal\link\Plugin\Field\FieldType\LinkItem $item */
 
-    /** @@TODO manage for private schema */
     $elements = parent::viewElements($items, $langcode);
     foreach ($elements as $delta => &$element) {
+
       $struri = $element['#url']->toUriString();
 
-      if (isset($element['#options']['attributes']['title'])) {
-        $strurl = urldecode($element['#url']->toString());
-        $element['#options']['attributes']['title'] = str_ireplace(['<filename>', '<url>'], [basename($struri), $strurl], $element['#options']['attributes']['title']);
-        // Lookup of size only if requested and local unmanaged/manged file.
-        if (stripos($element['#options']['attributes']['title'], "<size>") !== FALSE && preg_match('/^base:/', $struri)) {
-			$file_size = $this->getPublicFileSize( $struri, $langcode);
-			$element['#options']['attributes']['title'] = str_ireplace('<size>', $file_size, $element['#options']['attributes']['title']);
+      $file = NULL;
+      if ($element['#url']->isRouted()) {
+        if ($element['#url']->getRouteName() === 'system.files') {
+          $file = !empty($element['#url']->getOption('query')) ? 'private://' . $element['#url']->getOption('query')['file'] : '';
         }
-        if(stripos($element['#title'], "<extension>") !== FALSE ) { 
-			$element['#options']['attributes']['title'] = str_ireplace('<extension>', pathinfo($struri, PATHINFO_EXTENSION), $element['#options']['attributes']['title']);		  
-        }	
+        $options = $element['#url']->getOptions();
+        unset($options['query']['file']);
+        unset($element['#options']['query']['file']);
+        // @todo Wrap in file_url_transform_relative()
+        // Fix in https://www.drupal.org/node/2646744.
+        $element['#url'] = Url::fromUri(file_create_url($file), $options);
       }
-	  
-      if(isset($element['#title']) && stripos($element['#title'], "<size>") !== FALSE && preg_match('/^base:/', $struri)) {
-			$file_size = $this->getPublicFileSize( $struri, $langcode);
-			$element['#title'] = str_ireplace('<size>', $file_size, $element['#title']);		  
-	  }
-      if(isset($element['#title']) && stripos($element['#title'], "<extension>") !== FALSE ) { 
-			$element['#title'] = str_ireplace('<extension>', pathinfo($struri, PATHINFO_EXTENSION), $element['#title']);		  
-      }  
-      if(isset($element['#title']) && stripos($element['#title'], "<filename>") !== FALSE ) { 
-			$element['#title'] = str_ireplace('<filename>', basename($struri), $element['#title']);		  
+      else {
+        $fileuri = $element['#url']->getUri();
+        if (preg_match('/^base:/', $fileuri)) {
+          $file = str_ireplace('base:' . PublicStream::basePath() . "/", "public://", $fileuri);
+        }
+      }
+
+      $file_info = [];
+      // Get the info as managed file.
+      if (!empty($file) && $file_entity = $this->getFileEntity($file)) {
+        $file_info['filename'] = $file_entity->getFilename();
+        $file_info['size'] = $file_entity->getSize();
+        $file_info['mime'] = $file_entity->getMimeType();
+        $file_info['ext'] = pathinfo($file_entity->getFilename(), PATHINFO_EXTENSION);
+      }
+      else {
+        // Try to get file info as unmanaged file.
+        $file_info = $this->getUnmanagedFileInfo($file);
+      }
+
+      $strurl = urldecode($element['#url']->toString());
+      $find = ['<filename>', '<url>', '<extension>', '<size>', '<mime>'];
+      $replace = [$file_info['filename'], $strurl, $file_info['ext'], format_size($file_info['size'], $langcode), strtr($file_info['mime'], ['/' => '-', '.' => '-'])];
+
+      if (isset($element['#options']['attributes']['title']) && !empty($file_info)) {
+
+        $element['#options']['attributes']['title'] = str_ireplace($find, $replace, $element['#options']['attributes']['title']);
+      }
+
+      if (isset($element['#title']) && !empty($file_info)) {
+        $element['#title'] = str_ireplace($find, $replace, $element['#title']);
+      }
+
+      if (isset($element['#options']['attributes']['class'])) {
+        $element['#options']['attributes']['class'] = str_ireplace($find, $replace, $element['#options']['attributes']['class']);
       }
 
       if (isset($element['#options']['attributes']['download'])) {
-
-        if (trim($element['#options']['attributes']['download']) === '<filename>') {
-          $element['#options']['attributes']['download'] = basename(urldecode($element['#url']->toString()));
+        if (trim($element['#options']['attributes']['download']) === '<filename>' && isset($file_info['filename'])) {
+          $element['#options']['attributes']['download'] = $file_info['filename'];
         }
         if (trim($element['#options']['attributes']['download']) === '<blank>') {
           $element['#options']['attributes']['download'] = "";
         }
       }
+
     }
 
     return $elements;
   }
 
-  private function getPublicFileSize( $struri, $langcode)
-  {
-	  if (preg_match('/^base:\\d/', $struri)) {
-		$struri = str_replace('base:', 'base:/', $struri);
-	  }
-	  $uri_parts = parse_url($struri);
-	  if ($uri_parts !== FALSE) {
-		// Set path with default schema to resolve real-path.
-		$filepath = str_ireplace(PublicStream::basePath() . "/", "public://", $uri_parts['path']);
+  /**
+   * Returns a unmanaged file information.
+   */
+  private function getUnmanagedFileInfo($fileuri) {
+    $file_info = [];
+    // Get the FileSystem service.
+    $filepathabs = \Drupal::service('file_system')->realpath($fileuri);
 
-		// Get the FileSystem service.
-		$filepathabs = \Drupal::service('file_system')->realpath($filepath);
+    if (file_exists($filepathabs)) {
+      $file_info['size'] = filesize($filepathabs);
+      $file_info['filename'] = basename($filepathabs);
+      $file_info['mime'] = mime_content_type($filepathabs);
+      $file_info['ext'] = pathinfo($filepathabs, PATHINFO_EXTENSION);
+    }
 
-	    if (file_exists($filepathabs)) {
-		  $file_size = format_size(filesize($filepathabs), $langcode);
-		  return $file_size;
-		  
-		}
-	  }
-	  return null;
+    return $file_info;
   }
+
+  /**
+   * Returns a managed file entity by uri.
+   */
+  private function getFileEntity($uri) {
+    $file = FALSE;
+    if ($files = \Drupal::entityTypeManager()->getStorage('file')->loadByProperties(['uri' => $uri])) {
+      $file = reset($files);
+    }
+    return $file;
+  }
+
 }

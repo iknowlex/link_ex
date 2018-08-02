@@ -29,18 +29,29 @@
      * Processes an url input.
      */
     processUrlInput: function(i, el) {
-      var button = imceInputEx.createUrlButton(el.id, el.getAttribute('data-imce-type'));
-      el.parentNode.insertBefore(button, el);
+	 var link_exWrap =	document.createElement('div');
+	 link_exWrap.className = 'link_ex-wrap';
+      var button = imceInputEx.createUrlButton(el.id, el.getAttribute('data-imce-type'), Drupal.t('Open File Manager'));
+	  button.classList.add("link_ex-fm");
+	  link_exWrap.appendChild(button);
+      //el.parentNode.insertBefore(button, el);
+	  if( el.hasAttribute('data-link_ex-file_private')) {
+         var buttonp = imceInputEx.createUrlButton(el.id, el.getAttribute('data-imce-type'), Drupal.t('Open File Manager (Private)'));
+	     buttonp.classList.add("link_ex-fm-private");
+	     buttonp.href = '/imce/private';
+	     link_exWrap.appendChild(buttonp);
+	  }
+      el.parentNode.insertBefore(link_exWrap, el);
     },
 
     /**
      * Creates an url input button.
      */
-    createUrlButton: function(inputId, inputType) {
+    createUrlButton: function(inputId, inputType, inputLabel) {
       var button = document.createElement('a');
       button.href = '#';
       button.className = 'link_ex-imce-button';
-      button.innerHTML = '<span>' + Drupal.t('Open File Manager') + '</span>';
+      button.innerHTML = '<span>' + inputLabel + '</span>';
       button.onclick = imceInputEx.urlButtonClick;
       button.InputId = inputId || 'imce-url-input-' + (Math.random() + '').substr(2);
       button.InputType = inputType || 'link';
@@ -51,7 +62,7 @@
      * Click event of an url button.
      */
     urlButtonClick: function(e) {
-      var url = Drupal.url('imce');
+	var url = Drupal.url('imce'); if (this.getAttribute('href') !== '#') { url = this.getAttribute('href'); }
       url += (url.indexOf('?') === -1 ? '?' : '&') + 'sendto=imceInputEx.urlSendto&inputId=' + this.InputId + '&type=' + this.InputType;
       // Focus on input before opening the window
       $('#' + this.InputId).focus();
