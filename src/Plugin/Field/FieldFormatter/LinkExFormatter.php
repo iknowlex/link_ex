@@ -106,7 +106,7 @@ class LinkExFormatter extends LinkFormatter {
    * Returns a unmanaged file information.
    */
   private function getUnmanagedFileInfo($fileuri) {
-    $file_info = [];
+    $file_info = ['size'=>"", 'filename'=>"", 'mime'=>"", 'ext'=>""];
     // Get the FileSystem service.
     $filepathabs = \Drupal::service('file_system')->realpath($fileuri);
 
@@ -124,7 +124,7 @@ class LinkExFormatter extends LinkFormatter {
    * Returns a managed file entity by uri.
    */
   private function getFileEntity($uri) {
-    $file = FALSE;
+    $file = "";
     if ($files = \Drupal::entityTypeManager()->getStorage('file')->loadByProperties(['uri' => $uri])) {
       $file = reset($files);
     }
