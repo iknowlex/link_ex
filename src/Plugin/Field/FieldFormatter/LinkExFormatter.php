@@ -43,13 +43,14 @@ class LinkExFormatter extends LinkFormatter {
       if ($element['#url']->isRouted()) {
         if ($element['#url']->getRouteName() === 'system.files') {
           $file = !empty($element['#url']->getOption('query')) ? 'private://' . $element['#url']->getOption('query')['file'] : '';
-        }
+
         $options = $element['#url']->getOptions();
         unset($options['query']['file']);
         unset($element['#options']['query']['file']);
         // @todo Wrap in file_url_transform_relative()
         // Fix in https://www.drupal.org/node/2646744.
         $element['#url'] = Url::fromUri(file_create_url($file), $options);
+	    }
       }
       else {
         $fileuri = $element['#url']->getUri();
